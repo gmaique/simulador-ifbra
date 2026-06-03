@@ -1,0 +1,42 @@
+# 🕹️ Simulador IFBrA — O Jogo da Perícia PCD
+
+Simulador educativo, em estilo arcade 8-bit, das **41 atividades do IFBrA**
+(Índice de Funcionalidade Brasileiro Aplicado) — a ferramenta oficial usada
+pelo INSS na **avaliação biopsicossocial da aposentadoria da pessoa com
+deficiência** (LC 142/2013, Portaria Interministerial AGU/MPS/MF/SEDH/MP 01/2014).
+
+**Jogue:** abra o `index.html` no navegador (ou acesse a versão publicada).
+
+## O que ele faz
+
+- Percorre as **41 atividades** dos 7 domínios, uma a uma, com as 4 notas
+  oficiais (100/75/50/25) traduzidas pra linguagem de gente;
+- Dicas contextuais por **tipo de impedimento** (mental/intelectual, motor,
+  visual, auditivo);
+- Aplica a **questão emblemática e o método Fuzzy** oficiais do seu tipo;
+- No final: pontuação total (×2 avaliadores), **grau provável**
+  (grave / moderada / leve / não caracterizada), detalhamento por domínio e
+  dicas de preparação pra perícia real;
+- Som chiptune (WebAudio), visual CRT, navegação por teclado (1-4),
+  leitor de tela (ARIA), progresso salvo no navegador.
+
+## Privacidade
+
+Nada sai do seu navegador. Sem servidor, sem cookies de terceiros, sem
+analytics. O progresso fica só no `localStorage` da sua máquina.
+
+## Aviso importante
+
+⚠️ **Simulação educativa.** Não é a avaliação oficial do INSS, não substitui
+perícia, advogado ou médico. As notas reais são atribuídas por perito médico
+e assistente social do INSS. Use para **entender a lógica do instrumento** e
+se preparar para relatar sua funcionalidade com fidelidade — sem minimizar
+nem exagerar.
+
+## Fontes
+
+- Portaria Interministerial AGU/MPS/MF/SEDH/MP nº 01/2014 (IFBrA, anexos)
+- Lei Complementar 142/2013
+- Faixas: ≤5.739 grave · 5.740–6.354 moderada · 6.355–7.584 leve · ≥7.585 não caracterizada
+
+Feito com 💚 pra comunidade PCD. Compartilhe.
