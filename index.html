@@ -142,7 +142,7 @@ a{color:var(--cyan)}
 ╚═╝╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</pre>
       <p class="px c-yel" style="font-size:13px; margin-top:10px">O JOGO DA AVALIAÇÃO PCD</p>
       <div class="box cy" style="text-align:left; max-width:640px; margin:18px auto">
-        <p>Esta é a ferramenta usada no Brasil para definir o <span class="c-yel">GRAU da deficiência</span> na aposentadoria da pessoa com deficiência (LC 142/2013): <span class="c-cyan">41 atividades</span>, pontuadas por 2 avaliadores (médico + assistente social), usando o índice oficial <span class="c-cyan">IFBrA</span> (Portaria Interministerial 01/2014).</p>
+        <p>Esta é a ferramenta usada no Brasil para definir o <span class="c-yel">GRAU da deficiência</span> na avaliação biopsicossocial da pessoa com deficiência (LC 142/2013): <span class="c-cyan">41 atividades</span>, pontuadas por 2 avaliadores (médico + assistente social), usando o índice oficial <span class="c-cyan">IFBrA</span> (Portaria Interministerial 01/2014).</p>
         <p style="margin-top:8px">Responda com a verdade do seu <span class="c-mag">pior dia típico</span> — nem o melhor dia, nem exagero. No final: sua pontuação e seu provável grau.</p>
         <p class="small" style="margin-top:8px">⚠ Simulação educativa. NÃO é a avaliação oficial e não substitui orientação profissional (jurídica ou de saúde). Nada do que você responder sai do seu navegador.</p>
       </div>
@@ -331,10 +331,10 @@ const DOM = [
   ]},
 ];
 const FAIXAS = [
-  {max:5739, nome:"GRAVE", cor:"var(--red)", msg:"Impacto severo: direito com 25 anos de contribuição (homem) / 20 (mulher).", anos:"25H/20M"},
-  {max:6354, nome:"MODERADA", cor:"var(--yellow)", msg:"Impacto médio: 29 anos (homem) / 24 (mulher).", anos:"29H/24M"},
-  {max:7584, nome:"LEVE", cor:"var(--green)", msg:"Impacto leve: 33 anos (homem) / 28 (mulher).", anos:"33H/28M"},
-  {max:99999, nome:"NÃO CARACTERIZADA", cor:"var(--dim)", msg:"Pontuação acima de 7.584: a deficiência não seria reconhecida nesta simulação.", anos:"—"}
+  {max:5739, nome:"GRAVE", cor:"var(--red)", msg:"A pontuação indica impacto SEVERO na funcionalidade.", anos:"grave"},
+  {max:6354, nome:"MODERADA", cor:"var(--yellow)", msg:"A pontuação indica impacto MÉDIO na funcionalidade.", anos:"moderada"},
+  {max:7584, nome:"LEVE", cor:"var(--green)", msg:"A pontuação indica impacto LEVE na funcionalidade.", anos:"leve"},
+  {max:99999, nome:"NÃO CARACTERIZADA", cor:"var(--dim)", msg:"Pontuação acima de 7.584: a deficiência não seria caracterizada nesta simulação.", anos:"n/c"}
 ];
 
 /* ================= AUDIO (chiptune) ================= */
@@ -496,7 +496,7 @@ const G = {
     const lines = [
       "SIMULADOR IFBrA (educativo) — resultado",
       `Tipo: ${TIPOS[this.tipo].nome} | Fuzzy: ${this.fuzzy?"SIM":"NÃO"}`,
-      `PONTUAÇÃO: ${total} → ${faixa.nome} (${faixa.anos} anos de contribuição)`,
+      `PONTUAÇÃO: ${total} → ${faixa.nome}`,
       "",
       ...byDom.map(d=>`D${d.n} ${d.nome}: ${d.soma*2}/${d.qt*200}${d.fz?" [fuzzy]":""}`),
       "",
