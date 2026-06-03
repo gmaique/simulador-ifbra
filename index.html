@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIMULADOR IFBrA — O Jogo da Perícia PCD</title>
-<meta name="description" content="Simulador educativo 8-bit das 41 atividades do IFBrA (avaliação biopsicossocial da aposentadoria da pessoa com deficiência - INSS).">
+<title>Simulador IFBrA — O Jogo da Avaliação PCD</title>
+<meta name="description" content="Simulador educativo 8-bit das 41 atividades do IFBrA — instrumento brasileiro de avaliação biopsicossocial da pessoa com deficiência.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
@@ -140,11 +140,11 @@ a{color:var(--cyan)}
 ██║██╔══╝  ██╔══██╗██╔══██╗██╔══██║
 ██║██║     ██████╔╝██║  ██║██║  ██║
 ╚═╝╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝</pre>
-      <p class="px c-yel" style="font-size:13px; margin-top:10px">O JOGO DA PERÍCIA PCD</p>
+      <p class="px c-yel" style="font-size:13px; margin-top:10px">O JOGO DA AVALIAÇÃO PCD</p>
       <div class="box cy" style="text-align:left; max-width:640px; margin:18px auto">
-        <p>Esta é a ferramenta que decide o <span class="c-yel">GRAU da deficiência</span> na aposentadoria PCD do INSS (LC 142/2013): <span class="c-cyan">41 atividades</span>, pontuadas por 2 peritos (médico + social), usando o índice oficial <span class="c-cyan">IFBrA</span> (Portaria Interministerial 01/2014).</p>
+        <p>Esta é a ferramenta usada no Brasil para definir o <span class="c-yel">GRAU da deficiência</span> na aposentadoria da pessoa com deficiência (LC 142/2013): <span class="c-cyan">41 atividades</span>, pontuadas por 2 avaliadores (médico + assistente social), usando o índice oficial <span class="c-cyan">IFBrA</span> (Portaria Interministerial 01/2014).</p>
         <p style="margin-top:8px">Responda com a verdade do seu <span class="c-mag">pior dia típico</span> — nem o melhor dia, nem exagero. No final: sua pontuação e seu provável grau.</p>
-        <p class="small" style="margin-top:8px">⚠ Simulação educativa. NÃO é a avaliação oficial e não substitui perícia, advogado ou médico. Nada do que você responder sai do seu navegador.</p>
+        <p class="small" style="margin-top:8px">⚠ Simulação educativa. NÃO é a avaliação oficial e não substitui orientação profissional (jurídica ou de saúde). Nada do que você responder sai do seu navegador.</p>
       </div>
       <button class="btn center px blink" style="text-align:center; font-size:14px; border-color:var(--yellow); color:var(--yellow)" onclick="G.start()">▶ INSERT COIN — INICIAR ◀</button>
       <p class="kbd-hint">Dica: jogue pelo teclado — teclas <b>1 a 4</b> respondem.</p>
@@ -185,7 +185,7 @@ a{color:var(--cyan)}
   <section class="screen" id="scr-fuzzy">
     <p class="stage-banner c-red">⚠ FINAL BOSS: A QUESTÃO EMBLEMÁTICA ⚠</p>
     <div class="box mg">
-      <p>O método <span class="c-mag">FUZZY</span> dá peso extra à sua situação se a condição oficial do seu tipo de impedimento for verdadeira. Responda com honestidade — na perícia real, o perito confere.</p>
+      <p>O método <span class="c-mag">FUZZY</span> dá peso extra à sua situação se a condição oficial do seu tipo de impedimento for verdadeira. Responda com honestidade — na avaliação real, isso é conferido.</p>
       <h2 class="big c-yel" id="fuzzyQ" style="margin-top:10px"></h2>
     </div>
     <div id="fuzzyOpts"></div>
@@ -209,19 +209,19 @@ a{color:var(--cyan)}
       <table id="domTable"></table>
     </div>
     <div class="box yl">
-      <p class="px c-yel" style="font-size:11px; margin-bottom:8px">⚡ POWER-UPS (leia antes da perícia real)</p>
+      <p class="px c-yel" style="font-size:11px; margin-bottom:8px">⚡ POWER-UPS (leia antes da avaliação real)</p>
       <ul style="margin-left:22px">
-        <li>Toda nota <b>≤75</b> precisa de <span class="c-yel">DOCUMENTO</span> que a sustente (laudo, declaração de quem ajuda, relatório, histórico) — sem prova, o perito devolve pra 100.</li>
-        <li>O perito preenche o formulário <b>depois</b> que você sai. A perícia dura minutos: o que pontua é o que está <span class="c-yel">escrito no processo</span>.</li>
+        <li>Toda nota <b>≤75</b> precisa de <span class="c-yel">DOCUMENTO</span> que a sustente (laudo, declaração de quem ajuda, relatório, histórico) — sem prova, o avaliador tende a registrar 100.</li>
+        <li>O avaliador preenche o formulário <b>depois</b> que você sai. O atendimento dura minutos: o que pontua é o que está <span class="c-yel">escrito e documentado</span>.</li>
         <li>Nunca responda "faço de boa". Fórmula: <span class="c-cyan">"Faço, MAS…"</span> + frequência/segurança/tempo/ajuda/modificação.</li>
-        <li>São DUAS perícias (médica e social) — a <b>social</b> costuma dar mais atenção: mesma narrativa nas duas.</li>
+        <li>São DUAS avaliações (médica e social) — a <b>social</b> costuma dar mais atenção: mesma narrativa nas duas.</li>
       </ul>
     </div>
     <div class="center" style="margin:16px 0">
       <button class="btn px" style="text-align:center; font-size:12px" onclick="G.copy()">📋 COPIAR RESUMO</button>
       <button class="btn px" style="text-align:center; font-size:12px" onclick="G.restart()">↺ JOGAR DE NOVO</button>
     </div>
-    <p class="small center">Compartilhe com quem precisa. Conhecimento sobre a perícia muda vidas.</p>
+    <p class="small center">Compartilhe com quem precisa. Conhecimento sobre a avaliação muda vidas.</p>
   </section>
 </main>
 
@@ -503,7 +503,7 @@ const G = {
       ...FLAT.map((a,i)=>`${i+1}. ${a.t}: ${this.resp[i]}`),
       "",
       "Faixas: ≤5739 GRAVE | 5740-6354 MODERADA | 6355-7584 LEVE | ≥7585 não caracterizada",
-      "⚠ Simulação educativa — não substitui a perícia oficial."
+      "⚠ Simulação educativa — não substitui a avaliação oficial."
     ];
     navigator.clipboard.writeText(lines.join("\n")).then(()=>{ AU.ok(); alert("Resumo copiado!"); });
   },
