@@ -36,3 +36,22 @@ nem exagerar.
 - Faixas: ≤5.739 grave · 5.740–6.354 moderada · 6.355–7.584 leve · ≥7.585 não caracterizada
 
 Feito com 💚 pra comunidade PCD. Compartilhe.
+
+## 🎮 Jogo 2: Resista ao Avaliador (`resista.html`)
+
+Treino anti-pegadinha focado em **TEA/TDAH**: você joga como "Alex" (ficha
+definida) e enfrenta 20 perguntas sorteadas de um banco de **100**, cobrindo as
+6 técnicas clássicas de teste de consistência em entrevistas de avaliação:
+
+1. **Sintoma plantado** — o avaliador oferece um sintoma que não existe;
+2. **Premissa falsa** — a pergunta embute algo que não aconteceu;
+3. **Generalização oferecida** — "então você não consegue NADA…";
+4. **Minimização-isca** — "mas no geral está tudo bem, né?";
+5. **Pergunta legítima** — confirmar o que é real (sem esconder nem inflar);
+6. **Pedido de exemplo** — sustentar com cena concreta.
+
+Barra de **credibilidade** (erros derrubam, com explicação do porquê) e rank
+final: 🛡 BLINDADO · ⚠ ESCORREGOU · 💀 QUEIMOU O FILME.
+
+> O treino ensina **fidelidade do relato** — recusar o que não é seu E não
+> esconder o que é. Nunca invenção.

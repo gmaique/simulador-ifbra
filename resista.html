@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESISTA AO AVALIADOR — treino anti-pegadinha (TEA/TDAH)</title>
+<meta name="description" content="Jogo educativo 8-bit: treine a recusar sintomas plantados, premissas falsas e generalizações numa entrevista de avaliação biopsicossocial. Foco: TEA e TDAH.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#0a0a12; --crt:#050507; --green:#39ff5e; --cyan:#23e6ff; --magenta:#ff3bd4;
+  --yellow:#ffe43b; --red:#ff4040; --dim:#9aa3b2; --panel:#10101e; --border:#2a2a45; }
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#000}
+body{background:var(--bg);color:var(--green);font-family:'VT323',monospace;font-size:22px;
+  line-height:1.45;min-height:100vh;display:flex;justify-content:center}
+.crt{position:relative;width:100%;max-width:880px;min-height:100vh;background:var(--crt);overflow:hidden}
+.crt::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+.crt::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:51;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+header{border-bottom:4px solid var(--red);padding:14px 16px 10px;display:flex;
+  justify-content:space-between;align-items:center;gap:10px;background:linear-gradient(180deg,#1c0202,#0a0a12)}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(10px,2.4vw,16px);color:var(--red);
+  text-shadow:3px 3px 0 #5a0a0a}
+.hud{display:flex;gap:8px}
+.hud button,.hud a{font-family:'Press Start 2P',monospace;font-size:9px;cursor:pointer;
+  background:var(--panel);color:var(--cyan);border:2px solid var(--cyan);padding:8px 10px;
+  min-height:40px;text-decoration:none;display:inline-flex;align-items:center}
+.hud button:hover,.hud a:hover,.hud button:focus-visible{background:var(--cyan);color:#000;outline:3px solid var(--yellow)}
+main{padding:18px 16px 90px;position:relative;z-index:1}
+.screen{display:none}.screen.on{display:block;animation:appear .25s steps(4)}
+@keyframes appear{from{transform:translateY(8px);opacity:0}}
+.px{font-family:'Press Start 2P',monospace;line-height:1.8}
+.c-cyan{color:var(--cyan)}.c-mag{color:var(--magenta)}.c-yel{color:var(--yellow)}
+.c-red{color:var(--red)}.c-dim{color:var(--dim)}.c-green{color:var(--green)}
+.box{border:3px solid var(--border);background:var(--panel);padding:16px;margin:14px 0}
+.box.cy{border-color:var(--cyan)}.box.rd{border-color:var(--red)}.box.yl{border-color:var(--yellow)}
+.btn{display:block;width:100%;text-align:left;cursor:pointer;margin:10px 0;
+  font-family:'VT323',monospace;font-size:21px;line-height:1.35;background:var(--panel);
+  color:var(--green);border:3px solid var(--border);padding:12px 14px;min-height:52px;position:relative}
+.btn:hover,.btn:focus-visible{border-color:var(--yellow);background:#1a1a08;outline:none}
+.btn .k{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--magenta);margin-right:8px}
+.center{text-align:center}.big{font-size:26px}.small{font-size:17px;color:var(--dim)}
+/* credibility HP bar */
+.hpwrap{margin:8px 0}
+.hplabel{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--yellow)}
+.hp{height:24px;border:3px solid var(--yellow);background:#160d00;position:relative}
+.hp>div{height:100%;background:repeating-linear-gradient(90deg,var(--green) 0 12px,#21c447 12px 24px);
+  width:100%;transition:width .4s steps(8)}
+.hp.low>div{background:repeating-linear-gradient(90deg,var(--red) 0 12px,#c42121 12px 24px)}
+/* examiner */
+.examiner{display:flex;gap:14px;align-items:flex-start;margin:12px 0}
+.face{font-size:46px;flex:0 0 64px;height:64px;display:flex;align-items:center;justify-content:center;
+  border:3px solid var(--red);background:#170808}
+.bubble{flex:1;border:3px solid var(--red);background:#140a0a;padding:14px;position:relative;font-size:23px}
+.bubble::before{content:"";position:absolute;left:-12px;top:22px;border:6px solid transparent;border-right-color:var(--red)}
+.feedback{padding:14px;margin:10px 0;border:3px solid;display:none}
+.feedback.ok{border-color:var(--green);background:#02180a;display:block}
+.feedback.bad{border-color:var(--red);background:#1c0606;display:block}
+.rank{font-family:'Press Start 2P',monospace;font-size:clamp(18px,5vw,38px);text-align:center;
+  padding:26px 10px;margin:16px 0;border:6px double currentColor;letter-spacing:2px}
+table{width:100%;border-collapse:collapse;font-size:19px;margin:10px 0}
+td,th{border:2px solid var(--border);padding:6px 8px;text-align:left}
+th{color:var(--cyan);font-family:'Press Start 2P',monospace;font-size:9px}
+footer{position:fixed;bottom:0;left:0;right:0;z-index:60;text-align:center;font-size:15px;
+  color:var(--dim);background:#000d;padding:6px;border-top:2px solid var(--border)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.kbd-hint{font-size:15px;color:var(--dim);text-align:center;margin-top:8px}
+@media (max-width:600px){body{font-size:20px}.btn{font-size:19px}.bubble{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="crt">
+<header>
+  <h1>⚠ RESISTA AO AVALIADOR</h1>
+  <div class="hud">
+    <a href="index.html" title="Voltar ao Simulador IFBrA">◀ JOGO 1</a>
+    <button id="btnSound" aria-pressed="true">🔊 SOM</button>
+  </div>
+</header>
+<main>
+<div id="live" aria-live="polite" class="sr-only"></div>
+
+<!-- TITLE -->
+<section class="screen on" id="scr-title">
+  <div class="center" style="margin-top:3vh">
+    <p class="px c-red" style="font-size:15px">TREINO ANTI-PEGADINHA</p>
+    <p class="px c-yel" style="font-size:10px;margin-top:8px">EDIÇÃO TEA / TDAH</p>
+  </div>
+  <div class="box cy">
+    <p>Avaliadores experientes testam a consistência do relato: <span class="c-red">plantam sintomas que não existem</span>, embutem <span class="c-red">premissas falsas</span>, oferecem <span class="c-red">generalizações</span> e <span class="c-red">minimizações</span> — e observam se você morde a isca.</p>
+    <p style="margin-top:8px">Quem inventa, cai. Quem responde com a verdade, passa. Este treino cria o <span class="c-yel">reflexo de recusar o que não é seu</span> — e de não esconder o que é.</p>
+  </div>
+  <div class="box yl">
+    <p class="px c-yel" style="font-size:10px;margin-bottom:8px">SUA FICHA — VOCÊ JOGA COMO "ALEX" (TEA nível 1 + TDAH)</p>
+    <p class="small" style="color:var(--green)">
+    ▸ Conversas só ensaiadas; usa frases prontas e roteiros ▸ Precisa de tudo POR ESCRITO (o que é falado se perde) ▸ Evita telefone; resolve por texto ▸ Seletividade alimentar; cardápio restrito ▸ Pessoa de apoio gerencia finanças, casa e vida social ▸ Fone de ouvido diário; sobrecarga em lugares cheios ▸ Hiperfoco por horas (esquece de comer) ▸ Rotina rígida; mudanças desorganizam ▸ Exaustão após socializar (dias de recuperação) ▸ Trava (shutdown) em sobrecarga ▸ Trabalha, com jornada adaptada ▸ Sono ruim; fitoterápico ▸ Falou aos 4 anos; fono na infância.
+    </p>
+    <p class="small" style="margin-top:6px">Regra de ouro: o que NÃO está na ficha, Alex NÃO tem. Responda como o Alex genuíno responderia.</p>
+  </div>
+  <div class="center">
+    <button class="btn px" style="text-align:center;font-size:13px;border-color:var(--red);color:var(--red)" onclick="J.start()">▶ ENTRAR NA SALA ◀</button>
+  </div>
+  <p class="kbd-hint">20 perguntas por partida, sorteadas de um banco de 100. Teclas 1-3 respondem.</p>
+</section>
+
+<!-- QUESTION -->
+<section class="screen" id="scr-q">
+  <div class="hpwrap">
+    <span class="hplabel">CREDIBILIDADE</span>
+    <div class="hp" id="hpBar"><div id="hpFill"></div></div>
+  </div>
+  <p class="px c-dim" style="font-size:9px" id="qNum"></p>
+  <div class="examiner">
+    <div class="face" id="face" aria-hidden="true">🧐</div>
+    <div class="bubble" id="qTxt"></div>
+  </div>
+  <div id="qOpts" role="group" aria-label="Suas respostas"></div>
+  <div class="feedback" id="fb" tabindex="-1"></div>
+  <div class="center"><button class="btn px" id="btnNext" style="display:none;text-align:center;font-size:12px" onclick="J.next()">▶ PRÓXIMA</button></div>
+</section>
+
+<!-- RESULT -->
+<section class="screen" id="scr-end">
+  <p class="px c-red center" style="font-size:12px">— FIM DA ENTREVISTA —</p>
+  <div class="rank" id="rank"></div>
+  <p class="center big" id="endScore"></p>
+  <div class="box cy">
+    <p class="px c-cyan" style="font-size:10px;margin-bottom:8px">ONDE VOCÊ ESCORREGOU (por tipo de pegadinha)</p>
+    <table id="endTable"></table>
+  </div>
+  <div class="box yl">
+    <p class="px c-yel" style="font-size:10px;margin-bottom:6px">AS 4 LEIS DO ENTREVISTADO GENUÍNO</p>
+    <ul style="margin-left:22px">
+      <li><b>Sintoma oferecido que você não reconhece = NÃO.</b> Recusar aumenta credibilidade.</li>
+      <li><b>Premissa falsa = corrigir antes de responder.</b> Nunca responda o detalhe de algo que não acontece.</li>
+      <li><b>Nada de "tudo" nem de "nada".</b> Caso real é granular: "consigo X, mas com Y".</li>
+      <li><b>Não esconda o que é seu.</b> Negar sintoma verdadeiro (mascarar) também derruba o quadro.</li>
+    </ul>
+  </div>
+  <div class="center">
+    <button class="btn px" style="text-align:center;font-size:12px" onclick="location.reload()">↺ JOGAR DE NOVO (novas perguntas)</button>
+    <a class="btn px" style="text-align:center;font-size:12px;display:block;text-decoration:none" href="index.html">🕹️ JOGO 1: SIMULADOR IFBrA</a>
+  </div>
+</section>
+</main>
+<footer>Educativo · treina fidelidade do relato, nunca invenção · seus dados não saem do navegador</footer>
+</div>
+
+<script>
+"use strict";
+/* ===== AUDIO ===== */
+const AU={ctx:null,on:true,
+ init(){if(!this.ctx){try{this.ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}},
+ b(f,d=.07,t="square",v=.12,w=0){if(!this.on||!this.ctx)return;const x=this.ctx.currentTime+w,
+  o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=t;o.frequency.setValueAtTime(f,x);
+  g.gain.setValueAtTime(v,x);g.gain.exponentialRampToValueAtTime(.001,x+d);
+  o.connect(g);g.connect(this.ctx.destination);o.start(x);o.stop(x+d+.02)},
+ ok(){this.b(660,.06);this.b(880,.09,"square",.1,.06)},
+ bad(){this.b(220,.18,"sawtooth",.14);this.b(160,.25,"sawtooth",.12,.15)},
+ coin(){this.b(988,.08);this.b(1319,.25,"square",.12,.08)},
+ win(){[523,659,784,1047,1319].forEach((f,i)=>this.b(f,.13,"square",.12,i*.12))},
+ lose(){[392,330,262,196,131].forEach((f,i)=>this.b(f,.22,"sawtooth",.12,i*.2))}};
+document.getElementById("btnSound").onclick=function(){AU.init();AU.on=!AU.on;
+ this.textContent=AU.on?"🔊 SOM":"🔇 MUDO";this.setAttribute("aria-pressed",AU.on);if(AU.on)AU.ok()};
+
+/* ===== BANCO DE 100 QUESTÕES =====
+   t: A=sintoma plantado, B=premissa falsa, C=generalização, D=minimização-isca,
+      E=pergunta legítima (confirmar!), F=detalhe reverso (dar exemplo concreto)
+   q: fala do avaliador | r: conteúdo da resposta certa */
+const TIPOS={A:"Sintoma plantado",B:"Premissa falsa",C:"Generalização oferecida",
+             D:"Minimização-isca",E:"Pergunta legítima",F:"Pedido de exemplo"};
+const BANK=[
+/* A — sintoma plantado (30) */
+{t:"A",q:"E junto com isso vem aquela dor de cabeça forte nas crises, né?",r:"sobrecarga e exaustão — dor de cabeça não é meu marcador"},
+{t:"A",q:"Você também vê vultos quando está sobrecarregado, imagino.",r:"não vejo nada — fico exausto e preciso de silêncio"},
+{t:"A",q:"Você esquece o caminho de casa às vezes, certo?",r:"minha memória de rotas é boa; o que perco é o que me FALAM"},
+{t:"A",q:"E os desmaios, acontecem com que frequência?",r:"nunca desmaiei"},
+{t:"A",q:"Você sente que as pessoas estão te perseguindo, não é?",r:"evito gente por exaustão, não por perseguição"},
+{t:"A",q:"Quando você fica agressivo e quebra as coisas em casa…",r:"não quebro nada — eu TRAVO e me isolo"},
+{t:"A",q:"As crises convulsivas começaram em que idade?",r:"não tenho convulsões"},
+{t:"A",q:"Você ouve seu nome sendo chamado quando não há ninguém?",r:"não"},
+{t:"A",q:"E aquela sensação de insetos andando na pele?",r:"minha questão sensorial é SOM e toque inesperado, não isso"},
+{t:"A",q:"Já acordou em algum lugar sem saber como chegou lá?",r:"nunca"},
+{t:"A",q:"Sente cheiros que as outras pessoas não sentem, né?",r:"sou sensível a cheiros REAIS fortes — não sinto cheiros inexistentes"},
+{t:"A",q:"E a compulsão por gastar dinheiro nas crises?",r:"minha questão financeira é DESORGANIZAÇÃO, não compulsão"},
+{t:"A",q:"Você chega a esquecer o nome de pessoas próximas?",r:"não — esqueço COMPROMISSOS e instruções, não pessoas"},
+{t:"A",q:"Tem fases de dias sem dormir e sem sentir falta, certo?",r:"meu sono é RUIM, mas preciso dormir — fico péssimo sem"},
+{t:"A",q:"E as ideias de ter poderes ou missões especiais?",r:"não tenho nada disso"},
+{t:"A",q:"O álcool ajuda a aguentar, não é?",r:"não uso álcool pra isso"},
+{t:"A",q:"Você trava no meio da rua por horas, sem se mexer?",r:"travo em sobrecarga por MINUTOS e busco um lugar quieto"},
+{t:"A",q:"Imagino que não reconheça o rosto de familiares…",r:"reconheço — minha dificuldade é CONTATO VISUAL, não reconhecimento"},
+{t:"A",q:"Você conversa com pessoas que não estão lá, né?",r:"falo sozinho ENSAIANDO conversas reais — não com pessoas imaginárias"},
+{t:"A",q:"A tremedeira nas mãos atrapalha o trabalho?",r:"não tenho tremor"},
+{t:"A",q:"Quando ansioso, você come coisas que não são comida?",r:"minha questão é SELETIVIDADE alimentar — cardápio restrito"},
+{t:"A",q:"Você grita com estranhos quando perde o controle, certo?",r:"com estranhos eu CONGELO — não grito"},
+{t:"A",q:"Tem semanas que não consegue levantar da cama, né?",r:"tenho DIAS de recuperação pós-social — semanas, não"},
+{t:"A",q:"Apagou muita memória do passado, imagino.",r:"lembro do passado — o que perco é o que me dizem AGORA"},
+{t:"A",q:"Sente gosto metálico antes das crises?",r:"não"},
+{t:"A",q:"Você se machuca de propósito pra aliviar, não é?",r:"tenho stims (balançar, mexer as mãos) — não me machuco"},
+{t:"A",q:"As letras embaralham na sua frente quando lê, né?",r:"leio bem — é o que OUÇO que se perde"},
+{t:"A",q:"E quando as luzes parecem mandar mensagens…",r:"luz forte me INCOMODA — não me manda mensagem"},
+{t:"A",q:"Você já ficou mudo por meses, certo?",r:"fico sem fala em sobrecarga por períodos CURTOS"},
+{t:"A",q:"Os pensamentos são colocados na sua cabeça por outros, né?",r:"não — meus pensamentos são meus, só aceleram"},
+/* B — premissa falsa (15) */
+{t:"B",q:"Quando você se perde dentro do mercado, o que faz?",r:"eu não me perco — eu EVITO mercado por sobrecarga; quem vai é meu apoio"},
+{t:"B",q:"Desde quando você não consegue mais trabalhar?",r:"eu trabalho — com jornada adaptada e tudo por escrito"},
+{t:"B",q:"Quantas vezes por semana vêm os ataques de fúria?",r:"não tenho ataques de fúria — tenho travamentos"},
+{t:"B",q:"Quem te dá banho nos dias ruins?",r:"tomo banho sozinho — nos dias ruins ele atrasa ou pula"},
+{t:"B",q:"Há quanto tempo você não sai de casa?",r:"eu saio — planejado e com custo de recuperação"},
+{t:"B",q:"Quando você parou de falar com sua família?",r:"não parei — quem MANTÉM o contato é meu apoio"},
+{t:"B",q:"Que remédio controlado você toma há anos?",r:"hoje uso fitoterápico pro sono — o histórico está no laudo"},
+{t:"B",q:"Quantos empregos você já perdeu por brigas?",r:"nenhum por briga — mudei por exaustão e inadequação"},
+{t:"B",q:"Desde quando sua esposa precisa te vestir?",r:"ela não me veste — ela ESCOLHE a roupa da ocasião por mim"},
+{t:"B",q:"Quando foi sua primeira internação psiquiátrica?",r:"nunca fui internado"},
+{t:"B",q:"Por que você abandonou os estudos?",r:"não abandonei — concluí, com muito custo e do meu jeito"},
+{t:"B",q:"Com que idade voltou a morar com seus pais?",r:"não voltei — moro com minha esposa"},
+{t:"B",q:"Quantas vezes a polícia foi acionada nas suas crises?",r:"nenhuma"},
+{t:"B",q:"Cadê a medicação de hoje — esqueceu de tomar?",r:"não uso medicação diária no momento; está no laudo"},
+{t:"B",q:"Quando você quebrou o celular na última crise?",r:"não quebro coisas — eu me isolo"},
+/* C — generalização (15) */
+{t:"C",q:"Então você não consegue fazer NADA sozinho, certo?",r:"consigo várias coisas — técnicas, p.ex. — MAS com adaptação; outras só com apoio"},
+{t:"C",q:"Ou seja: totalmente dependente da sua esposa.",r:"parcialmente — finanças e vida social sim; trabalho técnico, não"},
+{t:"C",q:"Você nunca sai de casa, então.",r:"saio — planejado, e pago com recuperação depois"},
+{t:"C",q:"Não tem amigo nenhum, é isso?",r:"tenho poucos, antigos — mantidos com ajuda do meu apoio"},
+{t:"C",q:"Então qualquer barulhinho já te incapacita.",r:"não qualquer — ambientes de MUITO estímulo; no trabalho é diário"},
+{t:"C",q:"Quer dizer que você não entende o que as pessoas falam.",r:"entendo — mas instrução longa só falada eu perco; preciso por escrito"},
+{t:"C",q:"Você não consegue cuidar de si mesmo, correto?",r:"cuido com rotina rígida — quando ela quebra, preciso de apoio"},
+{t:"C",q:"Então trabalhar é impossível pra você.",r:"trabalho HOJE — com adaptações; sem elas eu não me sustento na função"},
+{t:"C",q:"Nunca atendeu um telefone na vida, imagino.",r:"atendo se inevitável — ensaiado e com custo; evito sempre que dá"},
+{t:"C",q:"Você odeia pessoas, pelo visto.",r:"não odeio — gosto de poucas; interação me EXAURE"},
+{t:"C",q:"Então não dirige, claro.",r:"dirijo — rotas conhecidas, fora do horário de pico"},
+{t:"C",q:"Não consegue nem fazer um sanduíche, certo?",r:"faço — sempre O MESMO; refeição completa, não: quem cozinha é meu apoio"},
+{t:"C",q:"Sua memória é zero, então.",r:"memória técnica é ótima — a VERBAL auditiva é que falha (está medida)"},
+{t:"C",q:"Você não tem lazer nenhum, suponho.",r:"tenho — solitário e hiperfocado, por horas"},
+{t:"C",q:"Então quando criança você também não conseguia nada.",r:"estudei e conclui — falei aos 4, fiz fono a infância toda, sempre 'do meu jeito'"},
+/* D — minimização-isca (15) */
+{t:"D",q:"Mas no geral está tudo bem, né?",r:"'bem' COM os suportes: tudo por escrito, jornada adaptada, apoio em casa"},
+{t:"D",q:"Pelo menos o trabalho vai indo bem, certo?",r:"vai — à custa de acomodações e exaustão; e sem progressão"},
+{t:"D",q:"Você é casado — então socializar, você socializa.",r:"casado com quem faz a PONTE social por mim"},
+{t:"D",q:"Chegou aqui sozinho, então está ótimo, né?",r:"cheguei — rota ensaiada; o custo vem depois"},
+{t:"D",q:"Seu QI é normal, então não há deficiência, concorda?",r:"QI não mede funcionalidade — meu prejuízo é executivo e social, medido em teste"},
+{t:"D",q:"Mas conversando assim comigo, você parece ótimo.",r:"isto é ensaiado — o senhor vê o roteiro, não o custo que vem depois"},
+{t:"D",q:"Todo mundo é um pouco assim, você não acha?",r:"na intensidade e frequência que eu vivo, não — está no laudo"},
+{t:"D",q:"Com o fone de ouvido resolve, então.",r:"o fone É a adaptação — precisar dele todos os dias é o ponto"},
+{t:"D",q:"Você estudou, se formou… então está tudo certo.",r:"concluí com o triplo de esforço e do meu jeito — o custo não aparece no diploma"},
+{t:"D",q:"Sua esposa ajuda por carinho, não por necessidade, né?",r:"ela mesma diz: se ela não fizer, não acontece — é necessidade"},
+{t:"D",q:"No fim de semana pelo menos você descansa e fica bem.",r:"fim de semana é RECUPERAÇÃO do custo da semana"},
+{t:"D",q:"Ah, mas isso é só timidez.",r:"timidez não trava a fala nem exige roteiro — é TEA diagnosticado"},
+{t:"D",q:"Você usa computador muito bem — então não tem limitação.",r:"técnica, não tenho; social e executiva, tenho — o quadro é dissociado mesmo"},
+{t:"D",q:"Se cozinha um lanche, então cozinhar você cozinha.",r:"lanche repetido, sim; refeição com etapas, não — quem cozinha é meu apoio"},
+{t:"D",q:"Mas você me olhou nos olhos agora, eu vi.",r:"treinei isso por anos — e custa; repare que sustento pouco"},
+/* E — pergunta legítima: CONFIRMAR sem esconder nem inflar (15) */
+{t:"E",q:"Você ensaia as conversas antes de tê-las?",r:"sim — ligação e reunião eu ensaio antes; sem ensaio eu travo"},
+{t:"E",q:"Precisa de instruções por escrito?",r:"sim — o que é só falado eu perco; está medido no laudo"},
+{t:"E",q:"Tem seletividade alimentar?",r:"sim — cardápio restrito; quem contorna é meu apoio"},
+{t:"E",q:"Evita telefone?",r:"sim — resolvo por texto; ligação, só ensaiada"},
+{t:"E",q:"Fica exausto depois de socializar?",r:"sim — preciso de horas isolado; às vezes o dia seguinte se perde"},
+{t:"E",q:"Alguém gerencia suas finanças?",r:"sim — meu apoio cuida de contas e prazos; sozinho eu perco datas"},
+{t:"E",q:"Você tem hiperfoco?",r:"sim — horas sem perceber; esqueço até de comer"},
+{t:"E",q:"Sua rotina é rígida?",r:"sim — mudança de planos desorganiza meu dia inteiro"},
+{t:"E",q:"Barulho te incomoda?",r:"sim — fone todos os dias; mercado e festa me sobrecarregam"},
+{t:"E",q:"Tem dificuldade com contato visual?",r:"sim — sustento pouco; aprendi a olhar a testa pra disfarçar"},
+{t:"E",q:"Você já 'travou' (shutdown)?",r:"sim — em sobrecarga paro de responder e preciso sair"},
+{t:"E",q:"Esquece compromissos?",r:"sim — sem alarmes e sem meu apoio, não acontecem"},
+{t:"E",q:"Você copia comportamento social dos outros?",r:"sim — observo e reproduzo como roteiro, conscientemente"},
+{t:"E",q:"Tem problema de sono?",r:"sim — sono ruim mesmo exausto; uso fitoterápico"},
+{t:"E",q:"É difícil manter amizades?",r:"sim — as poucas que tenho, meu apoio ajuda a manter"},
+/* F — detalhe reverso: dar exemplo CONCRETO (10) */
+{t:"F",q:"Me dê um exemplo concreto de travamento.",r:"semana passada, numa reunião com 6 pessoas: parei de responder, desliguei a câmera e levei 1h pra voltar"},
+{t:"F",q:"Um exemplo de esquecer o que te falaram?",r:"ontem: pediram 3 itens do mercado por áudio — comprei 1"},
+{t:"F",q:"Quando o fone de ouvido foi necessário, por exemplo?",r:"no mercado, sábado — sem ele eu saio no meio da compra"},
+{t:"F",q:"Exemplo de ensaiar uma ligação?",r:"pra ligar pro plano de saúde escrevi o roteiro e treinei duas vezes antes"},
+{t:"F",q:"E quando a rotina quebrou, o que houve?",r:"mudaram uma reunião de horário e perdi a manhã inteira me reorganizando"},
+{t:"F",q:"Um exemplo da ajuda nas finanças?",r:"a conta de luz venceu duas vezes quando tentei assumir — voltou pro meu apoio"},
+{t:"F",q:"Exemplo da seletividade alimentar?",r:"almoço a mesma coisa há meses; em restaurante novo, não como"},
+{t:"F",q:"Exemplo de exaustão depois de evento social?",r:"depois do aniversário da família, passei o domingo isolado, sem conversar"},
+{t:"F",q:"Me conte um episódio de hiperfoco.",r:"sábado: 6 horas direto num projeto — esqueci de almoçar"},
+{t:"F",q:"Um exemplo disso no trabalho?",r:"peço tudo por escrito no chat; um prazo combinado só por voz, eu perdi"},
+];
+
+/* ===== opções por tipo (certa + 2 erradas com explicação) ===== */
+function makeOpts(it){
+  const R=it.r;
+  const T={
+   A:[{ok:1,txt:`"Não, isso eu não tenho. O que eu tenho é ${R}."`,
+       exp:"✔ Recusou o sintoma plantado. É o teste que o genuíno passa fácil — credibilidade sobe."},
+      {ok:0,txt:`"Sim… isso também acontece comigo."`,
+       exp:"✘ MORDEU A ISCA: aceitou sintoma que NÃO está na ficha/laudo. O avaliador anotou: relato não confiável — e agora duvida até do que era verdade."},
+      {ok:0,txt:`"Pode ser… acho que às vezes sim."`,
+       exp:"✘ Aceitar 'por via das dúvidas' é aceitar. Se você não reconheceu na hora, a resposta é NÃO."}],
+   B:[{ok:1,txt:`"Espera — isso não acontece comigo. O que acontece é: ${R}."`,
+       exp:"✔ Corrigiu a premissa ANTES de responder. Nunca responda o detalhe de algo que não existe."},
+      {ok:0,txt:`(responder o detalhe) "Ah, geralmente de manhã…"`,
+       exp:"✘ Respondeu o DETALHE de uma premissa falsa — confirmou algo que não existe. Pegadinha completa."},
+      {ok:0,txt:`(silêncio constrangido, muda de assunto)`,
+       exp:"✘ Não corrigir deixa a premissa falsa registrada como aceita. Corrija com calma: 'isso não acontece comigo'."}],
+   C:[{ok:1,txt:`"Não é bem assim: ${R}."`,
+       exp:"✔ Rejeitou o 'tudo/nada' e devolveu o quadro GRANULAR — assinatura do caso genuíno."},
+      {ok:0,txt:`"É… praticamente isso, não consigo mesmo."`,
+       exp:"✘ Abraçou a generalização. 'Não consigo NADA' é perfil de simulador — e desmente suas capacidades reais documentadas."},
+      {ok:0,txt:`"Não, não! Eu consigo tudo normalmente."`,
+       exp:"✘ Foi pro outro extremo (masking): negou as dificuldades reais. Dissimular também destrói o quadro."}],
+   D:[{ok:1,txt:`"Depende do que chamamos de bem: ${R}."`,
+       exp:"✔ Não engoliu o 'tá tudo bem' — requalificou com o suporte/custo real."},
+      {ok:0,txt:`"É… no geral tá tudo bem, sim."`,
+       exp:"✘ A isca da minimização: o 'tudo bem' social vira nota 100 no formulário. Era exatamente o que ele queria ouvir."},
+      {ok:0,txt:`"Nada está bem! Tudo na minha vida é terrível!"`,
+       exp:"✘ Exagero global em resposta à isca — soa teatral e contradiz suas capacidades reais."}],
+   E:[{ok:1,txt:`"Sim: ${R}."`,
+       exp:"✔ Confirmou o que é SEU, com formato 'faço/acontece + como + custo'. Nem escondeu, nem inflou."},
+      {ok:0,txt:`"Não, isso não tenho, não…"`,
+       exp:"✘ MASCAROU: negou um traço que está na ficha. Dissimulação derruba o quadro tanto quanto invenção."},
+      {ok:0,txt:`"Sim! E também ouço vozes e tenho desmaios."`,
+       exp:"✘ Parassimulação: pegou o sintoma verdadeiro e 'enfeitou' com o que não é seu. Contaminou a resposta certa."}],
+   F:[{ok:1,txt:`"${R[0].toUpperCase()+R.slice(1)}."`,
+       exp:"✔ Exemplo CONCRETO, com cena e consequência. Detalhe verificável é o que sustenta credibilidade."},
+      {ok:0,txt:`"Ah… agora não lembro de nenhum exemplo."`,
+       exp:"✘ Vago no detalhe verificável = flag. (Se der branco REAL, diga: 'me deu branco — isso me acontece; posso voltar nessa?')"},
+      {ok:0,txt:`"Acontece sempre, o tempo todo, todo dia, de todas as formas."`,
+       exp:"✘ Inflação genérica no lugar de exemplo. 'Sempre/tudo' não é cena — é slogan."}],
+  };
+  return T[it.t].map(o=>({...o}));
+}
+
+/* ===== GAME ===== */
+const ROUND=20;
+const J={
+ deck:[],i:0,hp:100,stats:{},faces:["🧐","🤨","😐","🧐","🤔"],
+ show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+   document.getElementById(id).classList.add("on");window.scrollTo(0,0)},
+ say(t){document.getElementById("live").textContent=t},
+ start(){AU.init();AU.coin();
+   this.deck=[...BANK].sort(()=>Math.random()-.5).slice(0,ROUND);
+   this.i=0;this.hp=100;this.stats={};
+   Object.keys(TIPOS).forEach(k=>this.stats[k]={hit:0,miss:0});
+   this.render();this.show("scr-q")},
+ render(){
+   const it=this.deck[this.i];
+   document.getElementById("qNum").textContent=`PERGUNTA ${this.i+1} / ${ROUND} — tipo oculto`;
+   document.getElementById("face").textContent=this.faces[this.i%this.faces.length];
+   document.getElementById("qTxt").textContent=it.q;
+   const fb=document.getElementById("fb");fb.className="feedback";fb.innerHTML="";
+   document.getElementById("btnNext").style.display="none";
+   const opts=makeOpts(it).sort(()=>Math.random()-.5);
+   const box=document.getElementById("qOpts");box.innerHTML="";
+   opts.forEach((o,idx)=>{
+     const b=document.createElement("button");b.className="btn";
+     b.innerHTML=`<span class="k">${idx+1}</span>${o.txt}`;
+     b.onclick=()=>this.answer(o,it);
+     box.appendChild(b)});
+   this.updateHP();
+   this.say(`Pergunta ${this.i+1}: ${it.q}`)},
+ answer(o,it){
+   document.querySelectorAll("#qOpts .btn").forEach(b=>b.disabled=true);
+   const fb=document.getElementById("fb");
+   if(o.ok){AU.ok();this.stats[it.t].hit++;this.hp=Math.min(100,this.hp+2);
+     fb.className="feedback ok";
+     fb.innerHTML=`<b class="c-green">CREDIBILIDADE +2</b> — ${o.exp}`}
+   else{AU.bad();this.stats[it.t].miss++;this.hp=Math.max(0,this.hp-12);
+     fb.className="feedback bad";
+     fb.innerHTML=`<b class="c-red">CREDIBILIDADE -12</b> — ${o.exp}<br><span class="small">[${TIPOS[it.t]}] Resposta blindada: ${makeOpts(it).find(x=>x.ok).txt}</span>`}
+   this.updateHP();fb.focus();
+   document.getElementById("btnNext").style.display="block";
+   this.say(fb.textContent)},
+ updateHP(){const f=document.getElementById("hpFill");f.style.width=this.hp+"%";
+   document.getElementById("hpBar").classList.toggle("low",this.hp<40)},
+ next(){AU.b&&AU.b(440,.05,"square",.08);this.i++;
+   if(this.i>=ROUND)this.end();else this.render()},
+ end(){
+   const r=document.getElementById("rank");let nome,cor;
+   if(this.hp>=85){nome="🛡 BLINDADO";cor="var(--green)";AU.win()}
+   else if(this.hp>=55){nome="⚠ ESCORREGOU";cor="var(--yellow)";AU.win()}
+   else{nome="💀 QUEIMOU O FILME";cor="var(--red)";AU.lose()}
+   r.textContent=nome;r.style.color=cor;
+   document.getElementById("endScore").innerHTML=`Credibilidade final: <b>${this.hp}%</b>`;
+   const tb=document.getElementById("endTable");
+   tb.innerHTML="<tr><th>TIPO DE PEGADINHA</th><th>ACERTOS</th><th>ERROS</th></tr>"+
+     Object.entries(TIPOS).map(([k,n])=>{
+       const s=this.stats[k];if(s.hit+s.miss===0)return"";
+       return`<tr><td>${n}</td><td class="c-green">${s.hit}</td><td class="${s.miss?'c-red':'c-dim'}">${s.miss}</td></tr>`}).join("");
+   this.show("scr-end");
+   this.say(`Resultado: ${nome}. Credibilidade ${this.hp}%.`)},
+};
+document.addEventListener("keydown",e=>{
+  if(e.key>="1"&&e.key<="3"){
+    const scr=document.querySelector(".screen.on");
+    const target=[...scr.querySelectorAll("button.btn:not(:disabled)")].filter(b=>b.querySelector(".k"))[+e.key-1];
+    if(target){target.click();e.preventDefault()}}});
+</script>
+</body>
+</html>
