@@ -76,6 +76,7 @@ footer{position:fixed;bottom:0;left:0;right:0;z-index:60;text-align:center;font-
   <h1>⚠ RESISTA AO AVALIADOR</h1>
   <div class="hud">
     <a href="index.html" title="Voltar ao Simulador IFBrA">◀ JOGO 1</a>
+    <button id="btnMusic" aria-pressed="true" title="Música">🎵</button>
     <button id="btnSound" aria-pressed="true">🔊 SOM</button>
   </div>
 </header>
@@ -148,22 +149,13 @@ footer{position:fixed;bottom:0;left:0;right:0;z-index:60;text-align:center;font-
 <footer>Educativo · treina fidelidade do relato, nunca invenção · seus dados não saem do navegador</footer>
 </div>
 
+<script src="chip.js"></script>
 <script>
 "use strict";
-/* ===== AUDIO ===== */
-const AU={ctx:null,on:true,
- init(){if(!this.ctx){try{this.ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}},
- b(f,d=.07,t="square",v=.12,w=0){if(!this.on||!this.ctx)return;const x=this.ctx.currentTime+w,
-  o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=t;o.frequency.setValueAtTime(f,x);
-  g.gain.setValueAtTime(v,x);g.gain.exponentialRampToValueAtTime(.001,x+d);
-  o.connect(g);g.connect(this.ctx.destination);o.start(x);o.stop(x+d+.02)},
- ok(){this.b(660,.06);this.b(880,.09,"square",.1,.06)},
- bad(){this.b(220,.18,"sawtooth",.14);this.b(160,.25,"sawtooth",.12,.15)},
- coin(){this.b(988,.08);this.b(1319,.25,"square",.12,.08)},
- win(){[523,659,784,1047,1319].forEach((f,i)=>this.b(f,.13,"square",.12,i*.12))},
- lose(){[392,330,262,196,131].forEach((f,i)=>this.b(f,.22,"sawtooth",.12,i*.2))}};
-document.getElementById("btnSound").onclick=function(){AU.init();AU.on=!AU.on;
- this.textContent=AU.on?"🔊 SOM":"🔇 MUDO";this.setAttribute("aria-pressed",AU.on);if(AU.on)AU.ok()};
+document.getElementById("btnSound").onclick=function(){const on=AU.toggleSfx();
+ this.textContent=on?"🔊 SOM":"🔇 MUDO";this.setAttribute("aria-pressed",on)};
+document.getElementById("btnMusic").onclick=function(){const on=AU.toggleMus("tension");
+ this.textContent=on?"🎵":"🔕";this.setAttribute("aria-pressed",on)};
 
 /* ===== BANCO DE 100 QUESTÕES =====
    t: A=sintoma plantado, B=premissa falsa, C=generalização, D=minimização-isca,
@@ -331,7 +323,7 @@ const J={
  show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
    document.getElementById(id).classList.add("on");window.scrollTo(0,0)},
  say(t){document.getElementById("live").textContent=t},
- start(){AU.init();AU.coin();
+ start(){AU.init();AU.coin();AU.music("tension");
    this.deck=[...BANK].sort(()=>Math.random()-.5).slice(0,ROUND);
    this.i=0;this.hp=100;this.stats={};
    Object.keys(TIPOS).forEach(k=>this.stats[k]={hit:0,miss:0});
@@ -366,9 +358,10 @@ const J={
    this.say(fb.textContent)},
  updateHP(){const f=document.getElementById("hpFill");f.style.width=this.hp+"%";
    document.getElementById("hpBar").classList.toggle("low",this.hp<40)},
- next(){AU.b&&AU.b(440,.05,"square",.08);this.i++;
+ next(){AU.sel();this.i++;
    if(this.i>=ROUND)this.end();else this.render()},
  end(){
+   AU.music(null);
    const r=document.getElementById("rank");let nome,cor;
    if(this.hp>=85){nome="🛡 BLINDADO";cor="var(--green)";AU.win()}
    else if(this.hp>=55){nome="⚠ ESCORREGOU";cor="var(--yellow)";AU.win()}
